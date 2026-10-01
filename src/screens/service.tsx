@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ContactButtons } from '@/components/contact-buttons';
@@ -11,7 +11,8 @@ import { SkeletonBlock } from '@/components/skeleton';
 import { StateMessage } from '@/components/state-message';
 import { ThemedText } from '@/components/themed-text';
 import { SERVICES, type Service } from '@/config';
-import { Brand, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { enterUp } from '@/constants/motion';
+import { BottomTabInset, Brand, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useOpenLink } from '@/hooks/use-open-link';
 import { useTheme } from '@/hooks/use-theme';
 import { usePost } from '@/lib/queries';
@@ -35,8 +36,12 @@ export default function ServiceScreen() {
   return (
     <View style={[styles.flex, { backgroundColor: theme.background }]}>
       <Stack.Screen options={{ title: 'Servicio' }} />
-      <ScrollView contentContainerStyle={styles.content}>
-        <Animated.View entering={FadeInDown.springify().damping(18)} style={styles.hero}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: insets.bottom + BottomTabInset + Spacing.four },
+        ]}>
+        <Animated.View entering={enterUp(0)} style={styles.hero}>
           <View style={styles.heroIcon}>
             <Ionicons
               name={service.icon as ComponentProps<typeof Ionicons>['name']}
@@ -52,7 +57,7 @@ export default function ServiceScreen() {
 
         <View style={styles.body}>
           <Animated.View
-            entering={FadeInDown.delay(80).springify().damping(18)}
+            entering={enterUp(2)}
             style={[styles.highlights, { backgroundColor: theme.backgroundElement }]}>
             {service.highlights.map((item) => (
               <View key={item} style={styles.highlight}>
@@ -62,25 +67,22 @@ export default function ServiceScreen() {
             ))}
           </Animated.View>
 
+          <ContactButtons
+            whatsappMessage={service.whatsappMessage}
+            emailSubject={`Solicitud: ${service.title}`}
+          />
+
           {service.pageSlug && <ServicePage slug={service.pageSlug} />}
+
+          {service.pageSlug && (
+            <ContactButtons
+              whatsappMessage={service.whatsappMessage}
+              emailSubject={`Solicitud: ${service.title}`}
+            />
+          )}
         </View>
       </ScrollView>
 
-      {/* Botones de contacto fijos abajo */}
-      <View
-        style={[
-          styles.footer,
-          {
-            paddingBottom: insets.bottom + Spacing.three,
-            backgroundColor: theme.background,
-            borderTopColor: theme.border,
-          },
-        ]}>
-        <ContactButtons
-          whatsappMessage={service.whatsappMessage}
-          emailSubject={`Solicitud: ${service.title}`}
-        />
-      </View>
     </View>
   );
 }
@@ -123,7 +125,6 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth,
     alignSelf: 'center',
-    paddingBottom: 140,
   },
   hero: {
     margin: Spacing.three,
@@ -161,14 +162,5 @@ const styles = StyleSheet.create({
   },
   skeleton: {
     gap: Spacing.two + 4,
-  },
-  footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingTop: Spacing.three,
-    paddingHorizontal: Spacing.three,
-    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });

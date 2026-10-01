@@ -2,10 +2,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 import { PressableScale } from '@/components/pressable-scale';
 import { ThemedText } from '@/components/themed-text';
+import { enterUp } from '@/constants/motion';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useFavorites } from '@/lib/favorites';
@@ -29,10 +30,7 @@ export function PostCard({ post, variant = 'row', index = 0 }: Props) {
   const saved = isFavorite(post.slug);
   const category = post.categories[0]?.name;
   const date = formatRelativeDate(new Date(post.date));
-  const entering = FadeInDown.delay(Math.min(index, 6) * 60)
-    .duration(400)
-    .springify()
-    .damping(18);
+  const entering = enterUp(index);
 
   if (variant === 'featured') {
     return (
@@ -114,7 +112,7 @@ export function PostCard({ post, variant = 'row', index = 0 }: Props) {
             </ThemedText>
             <PressableScale
               hitSlop={10}
-              activeScale={0.8}
+              activeScale={0.9}
               onPress={() => toggleFavorite(post)}
               accessibilityRole="button"
               accessibilityLabel={saved ? 'Quitar de guardados' : 'Guardar'}>

@@ -46,6 +46,7 @@ export default function CategoryScreen() {
           </View>
         }
         emptyTitle="Todavía no hay artículos en esta categoría"
+        inTabs
       />
     </>
   );

@@ -10,20 +10,22 @@ export default function AppTabs() {
     <NativeTabs
       backgroundColor={theme.backgroundElement}
       indicatorColor={theme.primarySoft}
+      // Sin el destello (ripple) de Material al pulsar: el indicador ya marca la pestaña.
+      rippleColor="transparent"
       tintColor={theme.primary}
       iconColor={{ default: theme.textSecondary, selected: theme.primary }}
       labelStyle={{ default: { color: theme.textSecondary }, selected: { color: theme.primary } }}>
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="(inicio)">
         <NativeTabs.Trigger.Label>Inicio</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} md="home" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explorar">
+      <NativeTabs.Trigger name="(explorar)">
         <NativeTabs.Trigger.Label>Explorar</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf="magnifyingglass" md="search" />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="servicios">
+      <NativeTabs.Trigger name="(servicios)">
         <NativeTabs.Trigger.Label>Servicios</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf={{ default: 'briefcase', selected: 'briefcase.fill' }}
@@ -31,7 +33,7 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="guardados">
+      <NativeTabs.Trigger name="(guardados)">
         <NativeTabs.Trigger.Label>Guardados</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf={{ default: 'bookmark', selected: 'bookmark.fill' }}

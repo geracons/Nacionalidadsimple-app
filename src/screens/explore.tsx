@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PostList } from '@/components/post-list';
@@ -18,6 +18,7 @@ import { SkeletonBlock } from '@/components/skeleton';
 import { StateMessage } from '@/components/state-message';
 import { TabHeader } from '@/components/tab-header';
 import { ThemedText } from '@/components/themed-text';
+import { enterUp } from '@/constants/motion';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useCategories } from '@/lib/queries';
@@ -104,7 +105,7 @@ function CategoryGrid() {
       {isPending ? (
         <View style={styles.grid}>
           {Array.from({ length: 6 }, (_, i) => (
-            <SkeletonBlock key={i} width={cellWidth} height={120} radius={Radius.md} />
+            <SkeletonBlock key={i} width={cellWidth} height={CARD_HEIGHT} radius={Radius.md} />
           ))}
         </View>
       ) : isError ? (
@@ -119,7 +120,7 @@ function CategoryGrid() {
           {data.map((category, index) => (
             <Animated.View
               key={category.id}
-              entering={FadeInDown.delay(Math.min(index, 10) * 40).springify().damping(18)}
+              entering={enterUp(index)}
               style={{ width: cellWidth }}>
               <PressableScale
                 onPress={() =>
@@ -133,7 +134,7 @@ function CategoryGrid() {
                 <ThemedText type="heading" numberOfLines={2}>
                   {category.name}
                 </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
+                <ThemedText type="small" themeColor="textSecondary" style={styles.cardCount}>
                   {category.count} {category.count === 1 ? 'artículo' : 'artículos'}
                 </ThemedText>
               </PressableScale>
@@ -144,6 +145,8 @@ function CategoryGrid() {
     </ScrollView>
   );
 }
+
+const CARD_HEIGHT = 156;
 
 const styles = StyleSheet.create({
   screen: {
@@ -180,8 +183,12 @@ const styles = StyleSheet.create({
     borderCurve: 'continuous',
     padding: Spacing.three,
     gap: Spacing.one + 2,
-    minHeight: 120,
+    // Altura fija: todas las tarjetas iguales aunque el nombre ocupe una o dos líneas.
+    height: CARD_HEIGHT,
     boxShadow: '0 2px 10px rgba(15, 23, 42, 0.05)',
+  },
+  cardCount: {
+    marginTop: 'auto',
   },
   cardIcon: {
     width: 34,

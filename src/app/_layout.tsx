@@ -1,8 +1,9 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import AppTabs from '@/components/app-tabs';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { FavoritesProvider } from '@/lib/favorites';
@@ -35,19 +36,7 @@ export default function RootLayout() {
       <FavoritesProvider>
         <ThemeProvider value={navigationTheme}>
           <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-          <Stack
-            screenOptions={{
-              headerBackButtonDisplayMode: 'minimal',
-              headerTintColor: colors.primary,
-              headerTitleStyle: { color: colors.text },
-              headerShadowVisible: false,
-              contentStyle: { backgroundColor: colors.background },
-            }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Inicio' }} />
-            <Stack.Screen name="post/[slug]" options={{ headerShown: false }} />
-            <Stack.Screen name="categoria/[slug]" options={{ title: '' }} />
-            <Stack.Screen name="servicio/[id]" options={{ title: '' }} />
-          </Stack>
+          <AppTabs />
         </ThemeProvider>
       </FavoritesProvider>
     </QueryProvider>

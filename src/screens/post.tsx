@@ -28,7 +28,7 @@ import { SkeletonBlock } from '@/components/skeleton';
 import { StateMessage } from '@/components/state-message';
 import { ThemedText } from '@/components/themed-text';
 import { WP_URL } from '@/config';
-import { Brand, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { BottomTabInset, Brand, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useOpenLink } from '@/hooks/use-open-link';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useTheme } from '@/hooks/use-theme';
@@ -250,7 +250,7 @@ export default function PostScreen() {
               </>
             )}
           </View>
-          <View style={{ height: insets.bottom + Spacing.five }} />
+          <View style={{ height: insets.bottom + BottomTabInset + Spacing.four }} />
         </View>
       </Animated.ScrollView>
 

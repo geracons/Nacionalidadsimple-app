@@ -10,10 +10,10 @@ import { useTheme } from '@/hooks/use-theme';
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 const TABS: { name: string; href: '/' | '/explorar' | '/servicios' | '/guardados'; label: string; icon: IconName }[] = [
-  { name: 'index', href: '/', label: 'Inicio', icon: 'home' },
-  { name: 'explorar', href: '/explorar', label: 'Explorar', icon: 'search' },
-  { name: 'servicios', href: '/servicios', label: 'Servicios', icon: 'briefcase' },
-  { name: 'guardados', href: '/guardados', label: 'Guardados', icon: 'bookmark' },
+  { name: '(inicio)', href: '/', label: 'Inicio', icon: 'home' },
+  { name: '(explorar)', href: '/explorar', label: 'Explorar', icon: 'search' },
+  { name: '(servicios)', href: '/servicios', label: 'Servicios', icon: 'briefcase' },
+  { name: '(guardados)', href: '/guardados', label: 'Guardados', icon: 'bookmark' },
 ];
 
 /** Versión web (sólo para previsualizar en el navegador): barra inferior similar a la nativa. */
