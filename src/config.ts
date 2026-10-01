@@ -14,9 +14,10 @@ export const APP_NAME = 'Nacionalidad Simple';
 export const APP_TAGLINE = 'Trámites de extranjería en España, explicados fácil';
 
 export const CONTACT = {
-  // TODO: reemplazar por los datos reales.
-  /** Número en formato internacional sin "+" ni espacios, p. ej. 34600111222 */
-  whatsapp: '34600000000',
+  /** Número en formato internacional sin "+" ni espacios. */
+  whatsapp: '34611899225',
+  /** Para mostrarlo en pantalla. */
+  whatsappDisplay: '+34 611 89 92 25',
   email: 'info@nacionalidadsimple.com',
   /** Página de contacto de la web (se abre en el navegador integrado). */
   contactUrl: `${WP_URL}/contacto/`,
@@ -29,67 +30,59 @@ export type Service = {
   /** Nombre de icono de Ionicons (@expo/vector-icons). */
   icon: string;
   /**
-   * Slug de la página de WordPress con la descripción completa del servicio.
+   * Slug de la página (o entrada) de WordPress con la explicación completa del servicio.
    * Si existe, su contenido se muestra dentro de la app tal como en la web.
    */
   pageSlug?: string;
   /** Puntos clave que se muestran siempre, aunque no haya página en WordPress. */
   highlights: string[];
-  /** Mensaje pre-rellenado al pulsar "Solicitar por WhatsApp". */
+  /**
+   * Formulario de solicitud con pago (WooCommerce). Se abre en el navegador integrado,
+   * así funcionan la subida de archivos y la pasarela de pago tal cual en la web.
+   */
+  order?: { label: string; url: string };
+  /** Mensaje pre-rellenado al pulsar "WhatsApp". */
   whatsappMessage: string;
 };
 
-// TODO: ajustar textos y slugs a las páginas reales de la web.
 export const SERVICES: Service[] = [
   {
     id: 'apostillado',
     title: 'Apostillado de documentos',
-    summary: 'Apostillamos tus documentos para que tengan validez internacional.',
+    summary: 'Apostillamos tus documentos argentinos para que tengan validez en España.',
     icon: 'ribbon-outline',
     pageSlug: 'apostillas',
     highlights: [
-      'Apostilla de La Haya para documentos españoles',
-      'Gestión completa sin que tengas que desplazarte',
-      'Envío a domicilio en España y al extranjero',
+      'Apostilla de La Haya para documentos argentinos',
+      'Trámite 100% online, sin moverte de casa',
+      'Apostilla digital válida en España y en los países del Convenio',
     ],
-    whatsappMessage: 'Hola, me interesa el servicio de apostillado de documentos.',
+    order: { label: 'Solicitar apostilla online', url: `${WP_URL}/apostillas/` },
+    whatsappMessage: 'Hola, me interesa el servicio de apostillado de documentos argentinos.',
   },
   {
-    id: 'nacionalidad',
-    title: 'Nacionalidad española',
-    summary: 'Te acompañamos en todo el expediente de nacionalidad por residencia.',
-    icon: 'flag-outline',
-    pageSlug: 'nacionalidad-espanola',
+    id: 'certificados',
+    title: 'Certificados argentinos',
+    summary: 'Solicitamos por ti certificados oficiales argentinos, sin viajar.',
+    icon: 'document-text-outline',
     highlights: [
-      'Revisión de requisitos y documentación',
-      'Presentación telemática del expediente',
-      'Seguimiento hasta la resolución y jura',
+      'Certificado de antecedentes penales nacionales',
+      'Certificado internacional de legalidad del carnet de conducir',
+      'Con apostilla incluida si la necesitas',
     ],
-    whatsappMessage: 'Hola, quiero información sobre el trámite de nacionalidad española.',
+    whatsappMessage: 'Hola, necesito solicitar un certificado argentino.',
   },
   {
-    id: 'residencia',
-    title: 'Residencia y arraigo',
-    summary: 'Arraigo social, laboral, familiar y renovaciones de residencia.',
-    icon: 'home-outline',
-    pageSlug: 'residencia-y-arraigo',
+    id: 'canje-licencia',
+    title: 'Canje de licencia de conducir',
+    summary: 'Te ayudamos a canjear tu carnet argentino por el español (DGT).',
+    icon: 'car-outline',
+    pageSlug: 'canje-de-conducir',
     highlights: [
-      'Estudio previo de tu caso',
-      'Preparación y presentación de la solicitud',
-      'Renovaciones y modificaciones',
+      'Canje del carnet de conducir argentino ante la DGT',
+      'Certificado de legalidad del carnet argentino',
+      'Gestión del trámite online',
     ],
-    whatsappMessage: 'Hola, quiero información sobre residencia / arraigo.',
-  },
-  {
-    id: 'citas',
-    title: 'Citas y trámites NIE / TIE',
-    summary: 'Te ayudamos con citas de extranjería, huellas y certificados.',
-    icon: 'calendar-outline',
-    highlights: [
-      'NIE, TIE y certificado de registro UE',
-      'Toma de huellas y recogida de tarjeta',
-      'Certificados y antecedentes penales',
-    ],
-    whatsappMessage: 'Hola, necesito ayuda con una cita / trámite de NIE o TIE.',
+    whatsappMessage: 'Hola, quiero información sobre el canje de mi licencia de conducir argentina.',
   },
 ];

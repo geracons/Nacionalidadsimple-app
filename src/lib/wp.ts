@@ -250,15 +250,15 @@ export async function listPosts(
  * Así los enlaces internos de la web se abren dentro de la app.
  */
 export async function getContentBySlug(slug: string, signal?: AbortSignal): Promise<Post> {
-  for (const path of ['/posts', '/pages']) {
-    const { data } = await request<RawPost[]>(
-      path,
-      { slug, _embed: EMBED, _fields: DETAIL_FIELDS },
-      signal
-    );
-    if (data.length > 0) return mapPost(data[0]);
-  }
-  throw new WpError('Este contenido ya no está disponible.', 404);
+  // Se piden a la vez (entrada y página) para no esperar dos viajes seguidos.
+  const query = { slug, _embed: EMBED, _fields: DETAIL_FIELDS };
+  const [posts, pages] = await Promise.all([
+    request<RawPost[]>('/posts', query, signal),
+    request<RawPost[]>('/pages', query, signal),
+  ]);
+  const found = posts.data[0] ?? pages.data[0];
+  if (!found) throw new WpError('Este contenido ya no está disponible.', 404);
+  return mapPost(found);
 }
 
 export async function listCategories(signal?: AbortSignal): Promise<Category[]> {

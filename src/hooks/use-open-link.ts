@@ -3,7 +3,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { useCallback } from 'react';
 import { Linking } from 'react-native';
 
-import { WP_URL } from '@/config';
+import { SERVICES, WP_URL } from '@/config';
+import type { ThemeColors } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { categorySlugFromUrl, internalSlugFromUrl } from '@/lib/wp';
 
@@ -12,6 +13,21 @@ export function absoluteUrl(href: string): string {
   if (href.startsWith('//')) return `https:${href}`;
   if (href.startsWith('/')) return `${WP_URL}${href}`;
   return href;
+}
+
+/** Abre una web dentro de la app (Safari View Controller / Chrome Custom Tabs). */
+export function openInAppBrowser(url: string, theme: ThemeColors) {
+  return WebBrowser.openBrowserAsync(url, {
+    controlsColor: theme.primary,
+    toolbarColor: theme.background,
+    presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+  }).catch(() => Linking.openURL(url));
+}
+
+/** Misma página ignorando "#ancla", "?query" y la barra final. */
+export function isSamePage(a: string, b: string) {
+  const normalize = (url: string) => absoluteUrl(url).split(/[?#]/)[0].replace(/\/+$/, '').toLowerCase();
+  return normalize(a) === normalize(b);
 }
 
 /**
@@ -39,18 +55,18 @@ export function useOpenLink() {
       }
 
       const slug = internalSlugFromUrl(url);
+      // Las páginas de servicios (p. ej. /apostillas) se abren en su ficha nativa.
+      const service = slug ? SERVICES.find((item) => item.pageSlug === slug) : undefined;
+      if (service) {
+        router.push({ pathname: '/servicio/[id]', params: { id: service.id } });
+        return;
+      }
       if (slug) {
         router.push({ pathname: '/post/[slug]', params: { slug } });
         return;
       }
 
-      if (/^https?:\/\//i.test(url)) {
-        WebBrowser.openBrowserAsync(url, {
-          controlsColor: theme.primary,
-          toolbarColor: theme.background,
-          presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-        }).catch(() => Linking.openURL(url));
-      }
+      if (/^https?:\/\//i.test(url)) openInAppBrowser(url, theme);
     },
     [theme]
   );

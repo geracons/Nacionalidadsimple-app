@@ -10,7 +10,8 @@ import { Platform } from 'react-native';
 export const Brand = {
   primary: '#1B3B8F',
   primaryDark: '#8FB0FF',
-  accent: '#E8A317',
+  /** Amarillo de la bandera de España. */
+  accent: '#F1BF00',
 } as const;
 
 export const Colors = {
@@ -69,6 +70,15 @@ export const Fonts = Platform.select({
     mono: 'var(--font-mono)',
   },
 });
+
+/**
+ * Tipografía de marca (la del logo de nacionalidadsimple.com) para el nombre y los títulos.
+ * Se carga en `src/app/_layout.tsx`; el texto normal usa la fuente del sistema.
+ */
+export const BrandFonts = {
+  extraBold: 'PlusJakartaSans_800ExtraBold',
+  bold: 'PlusJakartaSans_700Bold',
+} as const;
 
 export const Spacing = {
   half: 2,

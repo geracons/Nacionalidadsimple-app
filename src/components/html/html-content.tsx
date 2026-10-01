@@ -30,7 +30,7 @@ import {
   type HtmlNode,
   type HtmlText,
 } from '@/components/html/parse';
-import { Fonts, Radius, Spacing, type ThemeColors } from '@/constants/theme';
+import { BrandFonts, Fonts, Radius, Spacing, type ThemeColors } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
@@ -93,6 +93,8 @@ const BLOCK_TAGS = new Set([
 function isBlock(node: HtmlNode): boolean {
   if (node.type === 'text') return false;
   if (BLOCK_TAGS.has(node.name)) return true;
+  // Botones (Gutenberg / Elementor) se pintan como botón aunque sean un <a>.
+  if (node.name === 'a' && isButtonLink(node)) return true;
   // Un <a> o <span> que envuelve una imagen o un bloque se trata como bloque.
   return node.children.some(isBlock);
 }
@@ -356,7 +358,13 @@ function renderBlock(node: HtmlElement, ctx: Ctx, options: BlockOptions, key: st
 
     case 'a':
       // Enlace que envuelve imágenes/bloques; los botones de Gutenberg tienen su propio estilo.
-      if (isButtonLink(node)) return <ButtonLink key={key} node={node} ctx={ctx} />;
+      if (isButtonLink(node)) {
+        return (
+          <View key={key} style={styles.buttons}>
+            <ButtonLink node={node} ctx={ctx} />
+          </View>
+        );
+      }
       return (
         <Fragment key={key}>
           {renderChildren(node.children, ctx, { ...options, href: node.attribs.href }, `${key}.`)}
@@ -735,10 +743,10 @@ function createStyles(theme: ThemeColors, scale: number) {
       marginTop: Spacing.three,
       marginBottom: Spacing.two,
     },
-    h1: { fontSize: size(28), lineHeight: size(34), fontWeight: 800, letterSpacing: -0.5 },
-    h2: { fontSize: size(24), lineHeight: size(30), fontWeight: 800, letterSpacing: -0.4 },
-    h3: { fontSize: size(20), lineHeight: size(27), fontWeight: 700, letterSpacing: -0.2 },
-    h4: { fontSize: size(18), lineHeight: size(25), fontWeight: 700 },
+    h1: { fontFamily: BrandFonts.extraBold, fontSize: size(27), lineHeight: size(34), letterSpacing: -0.5 },
+    h2: { fontFamily: BrandFonts.extraBold, fontSize: size(23), lineHeight: size(30), letterSpacing: -0.4 },
+    h3: { fontFamily: BrandFonts.bold, fontSize: size(19.5), lineHeight: size(27), letterSpacing: -0.2 },
+    h4: { fontFamily: BrandFonts.bold, fontSize: size(17.5), lineHeight: size(25) },
     h5: { fontSize: size(17), lineHeight: size(24), fontWeight: 700 },
     h6: {
       fontSize: size(15),
@@ -930,6 +938,7 @@ function createStyles(theme: ThemeColors, scale: number) {
       marginBottom: Spacing.three,
     },
     button: {
+      alignItems: 'center',
       backgroundColor: theme.primary,
       borderRadius: Radius.pill,
       paddingVertical: Spacing.three - 4,

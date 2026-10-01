@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
 
-import { Fonts, ThemeColor } from '@/constants/theme';
+import { BrandFonts, Fonts, ThemeColor } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
@@ -39,21 +39,21 @@ const styles = StyleSheet.create({
     fontWeight: 400,
   },
   title: {
-    fontSize: 32,
+    fontFamily: BrandFonts.extraBold,
+    fontSize: 30,
     lineHeight: 38,
-    fontWeight: 800,
     letterSpacing: -0.6,
   },
   subtitle: {
-    fontSize: 22,
+    fontFamily: BrandFonts.extraBold,
+    fontSize: 21,
     lineHeight: 28,
-    fontWeight: 700,
     letterSpacing: -0.3,
   },
   heading: {
-    fontSize: 17,
+    fontFamily: BrandFonts.bold,
+    fontSize: 16.5,
     lineHeight: 23,
-    fontWeight: 700,
   },
   small: {
     fontSize: 14,

@@ -7,13 +7,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ContactButtons } from '@/components/contact-buttons';
 import { HtmlContent } from '@/components/html/html-content';
+import { PressableScale } from '@/components/pressable-scale';
 import { SkeletonBlock } from '@/components/skeleton';
 import { StateMessage } from '@/components/state-message';
 import { ThemedText } from '@/components/themed-text';
 import { SERVICES, type Service } from '@/config';
-import { enterUp } from '@/constants/motion';
 import { BottomTabInset, Brand, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
-import { useOpenLink } from '@/hooks/use-open-link';
+import { isSamePage, openInAppBrowser, useOpenLink } from '@/hooks/use-open-link';
 import { useTheme } from '@/hooks/use-theme';
 import { usePost } from '@/lib/queries';
 
@@ -41,7 +41,7 @@ export default function ServiceScreen() {
           styles.content,
           { paddingBottom: insets.bottom + BottomTabInset + Spacing.four },
         ]}>
-        <Animated.View entering={enterUp(0)} style={styles.hero}>
+        <View style={styles.hero}>
           <View style={styles.heroIcon}>
             <Ionicons
               name={service.icon as ComponentProps<typeof Ionicons>['name']}
@@ -53,26 +53,28 @@ export default function ServiceScreen() {
             {service.title}
           </ThemedText>
           <ThemedText style={[styles.heroText, { opacity: 0.85 }]}>{service.summary}</ThemedText>
-        </Animated.View>
+        </View>
 
         <View style={styles.body}>
-          <Animated.View
-            entering={enterUp(2)}
-            style={[styles.highlights, { backgroundColor: theme.backgroundElement }]}>
+          <View style={[styles.highlights, { backgroundColor: theme.backgroundElement }]}>
             {service.highlights.map((item) => (
               <View key={item} style={styles.highlight}>
                 <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
                 <ThemedText style={styles.flex}>{item}</ThemedText>
               </View>
             ))}
-          </Animated.View>
+          </View>
+
+          {service.order && <OrderButton order={service.order} />}
 
           <ContactButtons
             whatsappMessage={service.whatsappMessage}
             emailSubject={`Solicitud: ${service.title}`}
           />
 
-          {service.pageSlug && <ServicePage slug={service.pageSlug} />}
+          {service.pageSlug && <ServicePage service={service} slug={service.pageSlug} />}
+
+          {service.pageSlug && service.order && <OrderButton order={service.order} />}
 
           {service.pageSlug && (
             <ContactButtons
@@ -87,10 +89,36 @@ export default function ServiceScreen() {
   );
 }
 
+/** Botón principal: abre el formulario de solicitud con pago de la web dentro de la app. */
+function OrderButton({ order }: { order: NonNullable<Service['order']> }) {
+  const theme = useTheme();
+  return (
+    <PressableScale
+      onPress={() => openInAppBrowser(order.url, theme)}
+      accessibilityRole="button"
+      style={[styles.orderButton, { backgroundColor: Brand.primary }]}>
+      <Ionicons name="document-attach-outline" size={20} color="#fff" />
+      <ThemedText type="heading" style={styles.orderText}>
+        {order.label}
+      </ThemedText>
+      <Ionicons name="arrow-forward" size={18} color="#fff" />
+    </PressableScale>
+  );
+}
+
 /** Contenido de la página de WordPress del servicio, si existe. */
-function ServicePage({ slug }: { slug: NonNullable<Service['pageSlug']> }) {
+function ServicePage({ service, slug }: { service: Service; slug: string }) {
   const { width } = useWindowDimensions();
+  const theme = useTheme();
   const openLink = useOpenLink();
+  // Los botones de la página que llevan al formulario ("Apostillar YA") abren la solicitud.
+  const onLinkPress = (href: string) => {
+    if (service.order && (href.startsWith('#') || isSamePage(href, service.order.url))) {
+      openInAppBrowser(service.order.url, theme);
+    } else {
+      openLink(href);
+    }
+  };
   const { data, isPending, isError } = usePost(slug);
 
   if (isPending) {
@@ -111,7 +139,7 @@ function ServicePage({ slug }: { slug: NonNullable<Service['pageSlug']> }) {
         html={data.html}
         featuredMediaId={data.featuredMediaId}
         width={Math.min(width, MaxContentWidth) - PADDING * 2}
-        onLinkPress={openLink}
+        onLinkPress={onLinkPress}
       />
     </Animated.View>
   );
@@ -159,6 +187,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.two + 2,
     alignItems: 'flex-start',
+  },
+  orderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.two + 2,
+    height: 56,
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.four,
+  },
+  orderText: {
+    color: '#fff',
+    flexShrink: 1,
   },
   skeleton: {
     gap: Spacing.two + 4,

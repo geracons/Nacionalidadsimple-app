@@ -9,7 +9,7 @@ import { ContactButtons } from '@/components/contact-buttons';
 import { PressableScale } from '@/components/pressable-scale';
 import { TabHeader } from '@/components/tab-header';
 import { ThemedText } from '@/components/themed-text';
-import { SERVICES } from '@/config';
+import { CONTACT, SERVICES } from '@/config';
 import { enterUp } from '@/constants/motion';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -61,6 +61,9 @@ export default function ServicesScreen() {
         <ThemedText type="subtitle">¿Tienes dudas?</ThemedText>
         <ThemedText themeColor="textSecondary">
           Escríbenos y te decimos qué necesitas para tu trámite, sin compromiso.
+        </ThemedText>
+        <ThemedText type="smallBold" themeColor="textSecondary">
+          WhatsApp {CONTACT.whatsappDisplay} · {CONTACT.email}
         </ThemedText>
         <ContactButtons
           whatsappMessage="Hola, tengo una consulta sobre un trámite de extranjería."

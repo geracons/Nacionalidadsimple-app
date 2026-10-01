@@ -1,6 +1,11 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import {
+  PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
+  useFonts,
+} from '@expo-google-fonts/plus-jakarta-sans';
 import { useEffect } from 'react';
 
 import AppTabs from '@/components/app-tabs';
@@ -27,9 +32,18 @@ export default function RootLayout() {
     },
   };
 
+  // La pantalla de carga se mantiene hasta tener la tipografía de marca (unos milisegundos).
+  const [fontsLoaded, fontError] = useFonts({
+    PlusJakartaSans_700Bold,
+    PlusJakartaSans_800ExtraBold,
+  });
+  const ready = fontsLoaded || Boolean(fontError);
+
   useEffect(() => {
-    SplashScreen.hideAsync();
-  }, []);
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  if (!ready) return null;
 
   return (
     <QueryProvider>

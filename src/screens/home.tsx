@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BrandMark } from '@/components/brand-mark';
+import { BrandMark, Wordmark } from '@/components/brand-mark';
 import { CategoryChips } from '@/components/category-chips';
 import { PostList } from '@/components/post-list';
 import { PressableScale } from '@/components/pressable-scale';
@@ -13,6 +13,8 @@ import { APP_NAME, APP_TAGLINE, SERVICES } from '@/config';
 import { Brand, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useCategories } from '@/lib/queries';
+
+const HEADER_VARIANT: 'wordmark' | 'mark' = 'wordmark';
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -24,13 +26,24 @@ export default function HomeScreen() {
   const header = (
     <View style={[styles.header, { paddingTop: insets.top + Spacing.three }]}>
       <View style={styles.brandRow}>
-        <BrandMark size={44} />
-        <View style={styles.brandTexts}>
-          <ThemedText type="heading">{APP_NAME}</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-            {APP_TAGLINE}
-          </ThemedText>
-        </View>
+        {HEADER_VARIANT === 'wordmark' ? (
+          <View style={styles.brandTexts}>
+            <Wordmark height={20} />
+            <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+              {APP_TAGLINE}
+            </ThemedText>
+          </View>
+        ) : (
+          <>
+            <BrandMark size={48} />
+            <View style={styles.brandTexts}>
+              <ThemedText type="heading">{APP_NAME}</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+                {APP_TAGLINE}
+              </ThemedText>
+            </View>
+          </>
+        )}
         <PressableScale
           onPress={() => router.navigate('/explorar')}
           accessibilityRole="button"
@@ -89,6 +102,7 @@ const styles = StyleSheet.create({
   },
   brandTexts: {
     flex: 1,
+    gap: 4,
   },
   iconButton: {
     width: 44,

@@ -1,39 +1,64 @@
+import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Brand } from '@/constants/theme';
+import { BrandFonts } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 
-/**
- * Logotipo provisional (iniciales). Sustituir por el logo real:
- * <Image source={require('@/assets/images/logo.png')} style={{ width: size, height: size }} />
- */
+const MARK_RATIO = 331 / 450;
+const FLAG_RATIO = 56 / 38;
+
+/** Ilustración de la Sagrada Familia del logo. */
 export function BrandMark({ size = 40 }: { size?: number }) {
   return (
+    <Image
+      source={require('@/assets/images/logo-mark.png')}
+      style={{ width: size * MARK_RATIO, height: size }}
+      contentFit="contain"
+      accessibilityLabel="Nacionalidad Simple"
+    />
+  );
+}
+
+/**
+ * Logotipo "bandera + nacionalidadsimple.com". El nombre se dibuja como texto
+ * (con la tipografía del logo) para que se vea nítido en cualquier pantalla.
+ */
+export function Wordmark({ height = 22, color }: { height?: number; color?: string }) {
+  const theme = useTheme();
+  return (
     <View
-      style={[
-        styles.mark,
-        { width: size, height: size, borderRadius: size * 0.3, backgroundColor: Brand.primary },
-      ]}>
-      <Text style={[styles.text, { fontSize: size * 0.4 }]}>NS</Text>
-      <View style={[styles.dot, { width: size * 0.2, height: size * 0.2, borderRadius: size }]} />
+      style={styles.row}
+      accessible
+      accessibilityRole="header"
+      accessibilityLabel="nacionalidadsimple.com">
+      <Image
+        source={require('@/assets/images/flag-es.png')}
+        style={{ width: height * FLAG_RATIO, height }}
+        contentFit="contain"
+      />
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        style={[
+          styles.text,
+          { color: color ?? theme.text, fontSize: height * 1.04, marginLeft: height * 0.3 },
+        ]}>
+        nacionalidadsimple.com
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mark: {
+  row: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderCurve: 'continuous',
+    flexShrink: 1,
   },
   text: {
-    color: '#fff',
-    fontWeight: 900,
+    fontFamily: BrandFonts.extraBold,
     letterSpacing: -0.5,
-  },
-  dot: {
-    position: 'absolute',
-    right: '14%',
-    top: '14%',
-    backgroundColor: Brand.accent,
+    flexShrink: 1,
+    includeFontPadding: false,
   },
 });
