@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Nacionalidad Simple",
+    "slug": "nacionalidadsimple",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "nacionalidadsimple",
+    "userInterfaceStyle": "automatic",
+    "description": "Guías de trámites de extranjería en España, apostillado y gestión de nacionalidad.",
+    "ios": {
+      "bundleIdentifier": "com.nacionalidadsimple.app",
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.nacionalidadsimple.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#1B3B8F",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1B3B8F",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 160
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
