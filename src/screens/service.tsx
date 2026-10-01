@@ -2,10 +2,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ContactButtons } from '@/components/contact-buttons';
+import { FadeUp } from '@/components/fade-up';
 import { HtmlContent } from '@/components/html/html-content';
 import { PressableScale } from '@/components/pressable-scale';
 import { SkeletonBlock } from '@/components/skeleton';
@@ -134,14 +134,14 @@ function ServicePage({ service, slug }: { service: Service; slug: string }) {
   if (isError || !data) return null;
 
   return (
-    <Animated.View entering={FadeIn.duration(250)}>
+    <FadeUp>
       <HtmlContent
         html={data.html}
         featuredMediaId={data.featuredMediaId}
         width={Math.min(width, MaxContentWidth) - PADDING * 2}
         onLinkPress={onLinkPress}
       />
-    </Animated.View>
+    </FadeUp>
   );
 }
 

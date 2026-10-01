@@ -2,15 +2,14 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ContactButtons } from '@/components/contact-buttons';
+import { FadeUp } from '@/components/fade-up';
 import { PressableScale } from '@/components/pressable-scale';
 import { TabHeader } from '@/components/tab-header';
 import { ThemedText } from '@/components/themed-text';
 import { CONTACT, SERVICES } from '@/config';
-import { enterUp } from '@/constants/motion';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -29,9 +28,7 @@ export default function ServicesScreen() {
 
       <View style={styles.list}>
         {SERVICES.map((service, index) => (
-          <Animated.View
-            key={service.id}
-            entering={enterUp(index)}>
+          <FadeUp key={service.id} index={index}>
             <PressableScale
               onPress={() => router.push({ pathname: '/servicio/[id]', params: { id: service.id } })}
               accessibilityRole="button"
@@ -51,12 +48,12 @@ export default function ServicesScreen() {
               </View>
               <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
             </PressableScale>
-          </Animated.View>
+          </FadeUp>
         ))}
       </View>
 
-      <Animated.View
-        entering={enterUp(SERVICES.length)}
+      <FadeUp
+        index={SERVICES.length}
         style={[styles.contact, { backgroundColor: theme.primarySoft }]}>
         <ThemedText type="subtitle">¿Tienes dudas?</ThemedText>
         <ThemedText themeColor="textSecondary">
@@ -69,7 +66,7 @@ export default function ServicesScreen() {
           whatsappMessage="Hola, tengo una consulta sobre un trámite de extranjería."
           emailSubject="Consulta desde la app"
         />
-      </Animated.View>
+      </FadeUp>
     </ScrollView>
   );
 }

@@ -7,7 +7,6 @@ import { Platform, Share, StyleSheet, useWindowDimensions, View } from 'react-na
 import { StatusBar } from 'expo-status-bar';
 import Animated, {
   Extrapolation,
-  FadeIn,
   interpolate,
   useAnimatedReaction,
   useAnimatedScrollHandler,
@@ -21,6 +20,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 
 import { BrandMark } from '@/components/brand-mark';
 import { ContactButtons } from '@/components/contact-buttons';
+import { FadeUp } from '@/components/fade-up';
 import { HtmlContent } from '@/components/html/html-content';
 import { PostCard } from '@/components/post-card';
 import { PressableScale } from '@/components/pressable-scale';
@@ -204,7 +204,7 @@ export default function PostScreen() {
             )}
 
             {post ? (
-              <Animated.View entering={FadeIn.duration(250)}>
+              <FadeUp>
                 <HtmlContent
                   html={post.html}
                   featuredMediaId={post.featuredMediaId}
@@ -212,7 +212,7 @@ export default function PostScreen() {
                   fontScale={fontScale}
                   onLinkPress={openLink}
                 />
-              </Animated.View>
+              </FadeUp>
             ) : query.isError ? (
               <StateMessage
                 icon="cloud-offline-outline"

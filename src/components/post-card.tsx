@@ -2,11 +2,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import Animated from 'react-native-reanimated';
 
+import { FadeUp } from '@/components/fade-up';
 import { PressableScale } from '@/components/pressable-scale';
 import { ThemedText } from '@/components/themed-text';
-import { enterUp } from '@/constants/motion';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useFavorites } from '@/lib/favorites';
@@ -30,11 +29,10 @@ export function PostCard({ post, variant = 'row', index = 0 }: Props) {
   const saved = isFavorite(post.slug);
   const category = post.categories[0]?.name;
   const date = formatRelativeDate(new Date(post.date));
-  const entering = enterUp(index);
 
   if (variant === 'featured') {
     return (
-      <Animated.View entering={entering}>
+      <FadeUp index={index}>
         <PressableScale
           onPress={() => openPost(post)}
           accessibilityRole="button"
@@ -75,12 +73,12 @@ export function PostCard({ post, variant = 'row', index = 0 }: Props) {
             ) : null}
           </View>
         </PressableScale>
-      </Animated.View>
+      </FadeUp>
     );
   }
 
   return (
-    <Animated.View entering={entering}>
+    <FadeUp index={index}>
       <PressableScale
         onPress={() => openPost(post)}
         accessibilityRole="button"
@@ -125,7 +123,7 @@ export function PostCard({ post, variant = 'row', index = 0 }: Props) {
           </View>
         </View>
       </PressableScale>
-    </Animated.View>
+    </FadeUp>
   );
 }
 

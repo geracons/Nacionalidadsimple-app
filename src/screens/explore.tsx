@@ -9,16 +9,15 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FadeUp } from '@/components/fade-up';
 import { PostList } from '@/components/post-list';
 import { PressableScale } from '@/components/pressable-scale';
 import { SkeletonBlock } from '@/components/skeleton';
 import { StateMessage } from '@/components/state-message';
 import { TabHeader } from '@/components/tab-header';
 import { ThemedText } from '@/components/themed-text';
-import { enterUp } from '@/constants/motion';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useCategories } from '@/lib/queries';
@@ -70,14 +69,14 @@ export default function ExploreScreen() {
       </TabHeader>
 
       {search.length >= 2 ? (
-        <Animated.View key="results" entering={FadeIn.duration(200)} style={styles.screen}>
+        <View style={styles.screen}>
           <PostList
             search={search}
             inTabs
             emptyTitle="Sin resultados"
             emptyMessage={`No encontramos artículos sobre «${search}». Prueba con otras palabras.`}
           />
-        </Animated.View>
+        </View>
       ) : (
         <CategoryGrid />
       )}
@@ -118,10 +117,7 @@ function CategoryGrid() {
       ) : (
         <View style={styles.grid}>
           {data.map((category, index) => (
-            <Animated.View
-              key={category.id}
-              entering={enterUp(index)}
-              style={{ width: cellWidth }}>
+            <FadeUp key={category.id} index={index} style={{ width: cellWidth }}>
               <PressableScale
                 onPress={() =>
                   router.push({ pathname: '/categoria/[slug]', params: { slug: category.slug } })
@@ -138,7 +134,7 @@ function CategoryGrid() {
                   {category.count} {category.count === 1 ? 'artículo' : 'artículos'}
                 </ThemedText>
               </PressableScale>
-            </Animated.View>
+            </FadeUp>
           ))}
         </View>
       )}
