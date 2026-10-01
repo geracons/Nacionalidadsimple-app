@@ -19,6 +19,7 @@ import {
 import { ImageViewer } from '@/components/html/image-viewer';
 import {
   classIncludes,
+  cleanContent,
   findFirst,
   hasClass,
   normalizeInlineWhitespace,
@@ -38,6 +39,8 @@ type Props = {
   width: number;
   /** Multiplicador del tamaño de letra elegido por el usuario. */
   fontScale?: number;
+  /** ID de la imagen destacada, para no repetirla dentro del contenido. */
+  featuredMediaId?: number;
   onLinkPress: (href: string) => void;
 };
 
@@ -224,6 +227,8 @@ function InlineRun({
 type BlockOptions = {
   textStyle?: TextStyle | TextStyle[];
   href?: string;
+  /** Dentro de listas los párrafos no llevan margen inferior. */
+  compact?: boolean;
 };
 
 /** Pinta una lista de nodos agrupando el texto en línea en párrafos <Text>. */
@@ -267,7 +272,7 @@ function renderBlock(node: HtmlElement, ctx: Ctx, options: BlockOptions, key: st
   switch (node.name) {
     case 'p':
       return (
-        <View key={key} style={styles.paragraphBlock}>
+        <View key={key} style={options.compact ? styles.paragraphCompact : styles.paragraphBlock}>
           {renderChildren(node.children, ctx, { ...options, textStyle }, `${key}.`)}
         </View>
       );
@@ -454,7 +459,9 @@ function List({ node, ctx, ordered }: { node: HtmlElement; ctx: Ctx; ordered: bo
               <View style={styles.bullet} />
             </View>
           )}
-          <View style={styles.listContent}>{renderChildren(item.children, ctx, {}, `${i}.`)}</View>
+          <View style={styles.listContent}>
+            {renderChildren(item.children, ctx, { compact: true }, `${i}.`)}
+          </View>
         </View>
       ))}
     </View>
@@ -689,10 +696,14 @@ export const HtmlContent = memo(function HtmlContent({
   html,
   width,
   fontScale = 1,
+  featuredMediaId,
   onLinkPress,
 }: Props) {
   const theme = useTheme();
-  const nodes = useMemo(() => parseHtml(html), [html]);
+  const nodes = useMemo(
+    () => cleanContent(parseHtml(html), { featuredMediaId }),
+    [html, featuredMediaId]
+  );
   const styles = useMemo(() => createStyles(theme, fontScale), [theme, fontScale]);
   const [viewerUri, setViewerUri] = useState<string>();
 
@@ -716,6 +727,9 @@ function createStyles(theme: ThemeColors, scale: number) {
     },
     paragraphBlock: {
       marginBottom: Spacing.three,
+    },
+    paragraphCompact: {
+      marginBottom: 0,
     },
     headingBlock: {
       marginTop: Spacing.three,

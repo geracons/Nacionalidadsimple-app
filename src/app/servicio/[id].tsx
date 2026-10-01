@@ -107,6 +107,7 @@ function ServicePage({ slug }: { slug: NonNullable<Service['pageSlug']> }) {
     <Animated.View entering={FadeIn.duration(250)}>
       <HtmlContent
         html={data.html}
+        featuredMediaId={data.featuredMediaId}
         width={Math.min(width, MaxContentWidth) - PADDING * 2}
         onLinkPress={openLink}
       />

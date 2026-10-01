@@ -12,12 +12,40 @@ export function stripTags(html: string): string {
     .trim();
 }
 
-/** Limpia el extracto que genera WordPress ("[…]", "Leer más", etc.). */
-export function cleanExcerpt(html: string): string {
-  return stripTags(html)
+/** Textos de cabeceras/índices que se cuelan en el extracto automático (p. ej. con Elementor). */
+const EXCERPT_NOISE = [/(^|\s)Poner categor[ií]a(?=\s|$)/giu, /(^|\s)(Tabla de contenidos?|Índice)(?=\s|$)/gu];
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Limpia el extracto que genera WordPress: "[…]", "Leer más", el título repetido
+ * de la cabecera y textos de índices.
+ */
+export function cleanExcerpt(html: string, title?: string): string {
+  let text = stripTags(html)
     .replace(/\s*\[(…|&hellip;|\.\.\.)\]\s*$/u, '…')
-    .replace(/\s*(Leer más|Seguir leyendo|Read more|Continue reading).*$/iu, '')
-    .trim();
+    .replace(/\s*(Leer más|Seguir leyendo|Read more|Continue reading).*$/iu, '');
+  for (const noise of EXCERPT_NOISE) text = text.replace(noise, ' ');
+  if (title) text = text.replace(new RegExp(escapeRegExp(title), 'giu'), ' ');
+  return removeRepeatedRun(text.split(/\s+/).filter(Boolean)).join(' ');
+}
+
+/**
+ * Quita una frase repetida dos veces seguidas al principio del texto
+ * (p. ej. el título de la cabecera de escritorio y el de móvil).
+ */
+function removeRepeatedRun(words: string[]): string[] {
+  for (let start = 0; start < Math.min(words.length, 30); start++) {
+    const maxLength = Math.min(30, Math.floor((words.length - start) / 2));
+    for (let length = maxLength; length >= 4; length--) {
+      let same = true;
+      for (let k = 0; k < length && same; k++) {
+        same = words[start + k] === words[start + length + k];
+      }
+      if (same) return [...words.slice(0, start + length), ...words.slice(start + length * 2)];
+    }
+  }
+  return words;
 }
 
 /** Minutos de lectura estimados (≈200 palabras por minuto). */

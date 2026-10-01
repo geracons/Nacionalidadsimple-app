@@ -46,7 +46,7 @@ export const SERVICES: Service[] = [
     title: 'Apostillado de documentos',
     summary: 'Apostillamos tus documentos para que tengan validez internacional.',
     icon: 'ribbon-outline',
-    pageSlug: 'apostillado',
+    pageSlug: 'apostillas',
     highlights: [
       'Apostilla de La Haya para documentos españoles',
       'Gestión completa sin que tengas que desplazarte',

@@ -41,6 +41,8 @@ export type PostSummary = {
 export type Post = PostSummary & {
   /** HTML del contenido, tal cual lo devuelve WordPress. */
   html: string;
+  /** ID de la imagen destacada (para no repetirla dentro del contenido). */
+  featuredMediaId?: number;
   author?: string;
   readingMinutes: number;
 };
@@ -89,6 +91,9 @@ type RawPost = {
   excerpt?: Rendered;
   content?: Rendered;
   sticky?: boolean;
+  featured_media?: number;
+  /** Datos SEO de Yoast: su meta descripción es mejor resumen que el extracto automático. */
+  yoast_head_json?: { description?: string };
   _embedded?: {
     author?: { name?: string }[];
     'wp:featuredmedia'?: RawMedia[];
@@ -102,7 +107,7 @@ type RawCategory = Category & { name: string; description: string };
 
 const API = `${WP_URL}/wp-json/wp/v2`;
 const EMBED = 'author,wp:featuredmedia,wp:term';
-const LIST_FIELDS = [
+const SUMMARY_FIELDS = [
   'id',
   'type',
   'slug',
@@ -112,9 +117,13 @@ const LIST_FIELDS = [
   'title',
   'excerpt',
   'sticky',
+  'featured_media',
+  'yoast_head_json.description',
   '_links',
   '_embedded',
-].join(',');
+];
+const LIST_FIELDS = SUMMARY_FIELDS.join(',');
+const DETAIL_FIELDS = [...SUMMARY_FIELDS, 'content'].join(',');
 const HIDDEN_CATEGORY_SLUGS = new Set(['uncategorized', 'sin-categoria', 'sin-categorizar']);
 
 type Query = Record<string, string | number | boolean | undefined>;
@@ -179,14 +188,16 @@ function mapImage(media?: RawMedia): FeaturedImage | undefined {
 
 function mapSummary(raw: RawPost): PostSummary {
   const terms = raw._embedded?.['wp:term']?.flat() ?? [];
+  const title = decodeEntities(raw.title.rendered).trim();
+  const seoDescription = decodeEntities(raw.yoast_head_json?.description ?? '').trim();
   return {
     id: raw.id,
     type: raw.type === 'page' ? 'page' : 'post',
     slug: raw.slug,
     link: raw.link,
     date: parseDate(raw),
-    title: decodeEntities(raw.title.rendered).trim(),
-    excerpt: cleanExcerpt(raw.excerpt?.rendered ?? ''),
+    title,
+    excerpt: seoDescription || cleanExcerpt(raw.excerpt?.rendered ?? '', title),
     image: mapImage(raw._embedded?.['wp:featuredmedia']?.[0]),
     categories: terms
       .filter((term) => term.taxonomy === 'category' && !HIDDEN_CATEGORY_SLUGS.has(term.slug))
@@ -200,6 +211,7 @@ function mapPost(raw: RawPost): Post {
   return {
     ...mapSummary(raw),
     html,
+    featuredMediaId: raw.featured_media || undefined,
     author: raw._embedded?.author?.[0]?.name,
     readingMinutes: readingMinutes(html),
   };
@@ -239,7 +251,11 @@ export async function listPosts(
  */
 export async function getContentBySlug(slug: string, signal?: AbortSignal): Promise<Post> {
   for (const path of ['/posts', '/pages']) {
-    const { data } = await request<RawPost[]>(path, { slug, _embed: EMBED }, signal);
+    const { data } = await request<RawPost[]>(
+      path,
+      { slug, _embed: EMBED, _fields: DETAIL_FIELDS },
+      signal
+    );
     if (data.length > 0) return mapPost(data[0]);
   }
   throw new WpError('Este contenido ya no está disponible.', 404);

@@ -207,6 +207,7 @@ export default function PostScreen() {
               <Animated.View entering={FadeIn.duration(250)}>
                 <HtmlContent
                   html={post.html}
+                  featuredMediaId={post.featuredMediaId}
                   width={contentWidth}
                   fontScale={fontScale}
                   onLinkPress={openLink}
